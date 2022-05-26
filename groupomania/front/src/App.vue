@@ -1,8 +1,18 @@
 <template>
   <div id="app">
-      <router-view />
+    <!-- Racine du router -->
+    <router-view />
   </div>
 </template>
+
+<script>
+export default {
+  created() {
+    const html = document.documentElement;
+    html.setAttribute("lang", "fr");
+  },
+};
+</script>
 
 <style lang="scss">
 #app {

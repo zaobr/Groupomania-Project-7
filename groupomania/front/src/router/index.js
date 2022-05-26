@@ -4,8 +4,7 @@ import Authentication from '@/views/Authentication.vue'
 import Login from '@/views/Login.vue'
 import Signup from '@/views/Signup.vue'
 import Home from '@/views/Home.vue'
-import Post from '@/views/Post.vue'
-import Profile from '@/views/Profile.vue'
+import NotFound from '@/views/404.vue'
 import Timeline from '@/views/Timeline.vue'
 
 
@@ -45,24 +44,19 @@ const routes = [
         component: Timeline
       },
       {
-        path: '/post',
-        name: 'Post',
-        component: Post
-      },
-      {
-        path: '/profile',
-        name: 'Profile',
-        component: Profile
-      },
-      {
         path: '',
         component: Timeline
       }
     ]
   },
   {
+    path: '/404',
+    name: 'Not Found',
+    component: NotFound
+  },
+  {
     path: '/:pathMatch(.*)*',
-    redirect: "/login"
+    redirect: "/404"
   },  
 ]
 

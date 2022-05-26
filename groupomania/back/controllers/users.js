@@ -8,6 +8,7 @@ exports.signup = (req, res, next) => {
             User.create({
                 lastname: req.body.lastname,
                 firstname: req.body.firstname,
+                media: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
                 email: req.body.email,
                 password: hash
             })
@@ -34,8 +35,7 @@ exports.login = (req, res, next) => {
                             user_id: user.id,
                             token: jwt.sign(
                                 {payload},
-                                process.env.JWT_K,
-                                {expiresIn: "24h"}
+                                process.env.JWT_K
                             )
                         })
                     }
@@ -45,8 +45,14 @@ exports.login = (req, res, next) => {
         .catch(error => res.status(404).json({error}))
 };
 
+exports.getUser = (req,res, next) => {
+    User.findOne({where: {id: req.auth.user_id}})
+    .then(user => res.status(200).json({user}))
+    .catch(error => res.status(404).json({error}))
+}
+
 exports.delete = (req, res, next) => {
-    User.findOne({where: {id: req.params.id}})
+    User.findOne({where: {id: req.auth.user_id}})
         .then(user => {
             if(!user){
                 return res.status(400).json({error: "Ce compte n'existe pas"})

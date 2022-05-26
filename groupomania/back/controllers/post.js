@@ -1,9 +1,14 @@
 const User = require('../models/user');
 const Post = require('../models/post');
+const Comment = require('../models/comment');
+const Like = require('../models/like');
 const fs = require('fs');
 
 exports.getAllPosts = (req, res, next) => {
-    Post.findAll({include: User})
+    Post.findAll({include: [User, {model: Comment ,include: [User]}, Like], order: [
+        ['createdAt', 'DESC'],
+        [{model: Comment}, 'createdAt', 'ASC']
+    ]})
         .then(posts => res.json({data: posts}))
         .catch(error => res.status(404).json({error}))
 }
@@ -53,18 +58,18 @@ exports.modifyPost = (req, res, next) => {
 }
 
 exports.deletePost = (req, res, next) => {
-    Post.findOne({where: {id: req.params.id}})
+    Post.findOne({where: {id: req.body.post_id}})
     .then(post => {
         if(!post){
-            res.status(400).json({error: "Ce contenu n'existe pas"})
+            res.status(404).json({error: "Ce contenu n'existe pas"})
         }
         if(req.auth.user_id !== post.user_id && !req.auth.isAdmin){
-            res.status(405).json({error: "Vous n'êtes pas le propriétaire de ce contenu"})
+            res.status(402).json({error: "Vous n'êtes pas le propriétaire de ce contenu"})
         }
         else{
             const filename = post.media.split('/images/')[1];
             fs.unlink(`images/${filename}`, () => {
-                post.destroy({where: {id: req.params.id}})
+                post.destroy({where: {id: req.body.post_id}})
                 .then(() => res.status(200).json({message: "Contenu supprimé"}))
                 .catch(error => res.status(500).json({error}))
               });

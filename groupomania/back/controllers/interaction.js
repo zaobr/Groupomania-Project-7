@@ -1,12 +1,5 @@
 const Like = require('../models/like');
 const Comment = require('../models/comment');
-const Post = require('../models/post');
-
-exports.getAllComments = (req, res, next) => {
-    Comment.findAll({where: {post_id: req.params.id}, include: Post})
-        .then(comments => res.json({data: comments}))
-        .catch(error => res.status(404).json({error}))
-}
 
 exports.addComment = (req, res, next) => {
     Comment.create({
@@ -19,7 +12,7 @@ exports.addComment = (req, res, next) => {
 }
 
 exports.deleteComment = (req, res, next) => {
-    Comment.findOne({where: {id: req.params.id}})
+    Comment.findOne({where: {id: req.body.comment_id}})
     .then(comment => {
         if(!comment){
             res.status(404).json({error: "Ce contenu n'existe pas"})
@@ -48,7 +41,8 @@ exports.like = (req, res, next) => {
                     .catch(error => res.status(500).json({error}))
             }
             else{
-                return res.json({error: "Contenu déjà liké."})
+                like.destroy({where: {user_id: req.auth.user_id, post_id: req.body.post_id}})
+                .then(() => res.status(200).json({message: "Like supprimé"}));
             }
         })
         .catch(error => res.status(404).json({error}))

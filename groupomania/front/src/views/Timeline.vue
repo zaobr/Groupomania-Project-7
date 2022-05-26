@@ -2,9 +2,10 @@
   <div class="timeline">
     <div class="columns">
       <div class="column is-two-thirds">
+        <!-- Titre et bouton d'affichage du formulaire de publication de post -->
         <div class="column base-head">
           <div class="columns head-post">
-            <div class="column title-col is-two-thirds">
+            <div class="title-col">
               <h1>Fil d'actualité</h1>
             </div>
             <div class="column button-col">
@@ -18,7 +19,7 @@
           </div>
         </div>
 
-        <!-- Form -->
+        <!-- Formulaire de publication -->
         <div v-if="showForm" class="box box-post box-form">
           <form>
             <div class="field is-small">
@@ -39,9 +40,9 @@
               v-model="post.text"
             ></textarea>
           </form>
-          <form id="postForm" name="postForm" enctype="multipart/form-data" method="post">
+          <form enctype="multipart/form-data">
             <label class="label">Importez votre contenu média</label>
-            <div class="file">
+            <div class="file has-name">
               <label class="file-label">
                 <input
                   class="file-input"
@@ -55,6 +56,9 @@
                   </span>
                   <span class="file-label"> Importer un fichier… </span>
                 </span>
+                <span v-if="post.media.name" class="file-name">
+                  {{ post.media.name }}
+                </span>
               </label>
             </div>
             <p class="help">Format accepté: JPG/JPEG, PNG, GIF.</p>
@@ -63,100 +67,12 @@
             </button>
           </form>
         </div>
-        <!-- End of Form -->
 
-        <!-- Post -->
-        <div class="box box-post">
-          <div>
-            <article class="media">
-              <figure class="media-left">
-                <figure class="image image is-48x48">
-                  <img src="https://bulma.io/images/placeholders/128x128.png" />
-                </figure>
-              </figure>
-              <div class="media-content">
-                <div class="content">
-                  <p>
-                    <strong>John Smith</strong>
-                    <br />
-                    <small>Il y a</small>
-                  </p>
-                </div>
-              </div>
-              <div class="media-right">
-                <button class="delete"></button>
-              </div>
-            </article>
-            <div>
-              <div class="content is-normal">
-                <h3>Titre de la publication</h3>
-                <p class="text-content">
-                  Curabitur accumsan turpis pharetra
-                  <strong>augue tincidunt</strong> blandit. Quisque condimentum
-                  maximus mi, sit amet commodo arcu rutrum id. Proin pretium
-                  urna vel cursus venenatis. Suspendisse potenti. Etiam mattis
-                  sem rhoncus lacus dapibus facilisis. Donec at dignissim dui.
-                  Ut et neque nisl.
-                </p>
-                <figure class="image">
-                  <img src="@/../public/images/hi.gif" />
-                </figure>
-              </div>
-            </div>
-            <div class="interaction-btn">
-              <button class="button is-light">
-                <span class="icon-text">
-                  <span class="icon">
-                    <i class="fas fa-thumbs-up"></i>
-                  </span>
-                  <span>J'aime</span>
-                </span>
-              </button>
-              <button
-                class="button is-light"
-                @click="
-                  showComment ? (showComment = false) : (showComment = true)
-                "
-              >
-                <span class="icon-text">
-                  <span class="icon">
-                    <i class="fas fa-comment"></i>
-                  </span>
-                  <span>Commenter</span>
-                </span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Comment Section-->
-
-          <article v-if="showComment" class="media">
-            <figure class="media-left">
-              <p class="image is-64x64">
-                <img src="https://bulma.io/images/placeholders/128x128.png" />
-              </p>
-            </figure>
-            <div class="media-content">
-              <div class="field">
-                <p class="control">
-                  <textarea
-                    class="textarea"
-                    placeholder="Add a comment..."
-                  ></textarea>
-                </p>
-              </div>
-              <div class="field">
-                <p class="control">
-                  <button class="button">Post comment</button>
-                </p>
-              </div>
-            </div>
-          </article>
-
-          <!-- End of Comment Section-->
-        </div>
-        <!-- End of post-->
+        <!-- Composant d'affichage de post et commentaires liés -->
+        <Post v-if="update"></Post>
       </div>
+
+      <!-- Partie evenements de la page -->
       <div class="column">
         <h2>Evénements</h2>
         <div v-for="event in events" :key="event.title" class="box box-event">
@@ -186,6 +102,7 @@
 
 <script>
 import axios from "axios";
+import Post from "@/components/Post.vue";
 
 export default {
   name: "Timeline",
@@ -194,8 +111,10 @@ export default {
       post: {
         title: "",
         text: "",
-        media: ""
+        media: "",
       },
+      update: true,
+      profilepicture: "",
       events: [
         {
           media: "https://picsum.photos/id/33/64/64",
@@ -229,63 +148,98 @@ export default {
         },
       ],
       showForm: false,
-      showComment: false,
+      postList: [],
     };
   },
-  components: {},
+  components: {
+    Post,
+  },
   computed: {},
+  mounted() {
+    // Récupération des données de l'utilisateur authentifié
+    axios
+      .get("http://localhost:8888/api/auth/profile", {
+        headers: {
+          Authorization: "Bearer " + localStorage.getItem("token"),
+        },
+      })
+      .then((user) => {
+        let parsedData = JSON.parse(JSON.stringify(user.data));
+        this.profilepicture = parsedData.user.media;
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  },
   methods: {
+    // Recupération du fichier uploadé depuis le formulaire de publication
     getMedia(event) {
       this.post.media = event.target.files[0];
     },
+    // Envoi de la nouvelle publication vers l'API et affichage
     publishPost() {
-        let postForm = new FormData()
-        postForm.append("image", this.post.media);
-        postForm.append("title", this.post.title);
-        postForm.append("text", this.post.text);
+      this.update = false;
+      let postForm = new FormData();
+      postForm.append("image", this.post.media);
+      postForm.append("title", this.post.title);
+      postForm.append("text", this.post.text);
       axios
         .post("http://localhost:8888/api/posts/", postForm, {
           headers: {
-            'Content-Type': 'multipart/form-data',
+            "Content-Type": "multipart/form-data",
             Authorization: "Bearer " + localStorage.getItem("token"),
           },
         })
-        .then((post) => {
-          console.log(post.data);
+        .then(() => {
+          this.showForm = false;
+          this.post.text = "";
+          this.post.title = "";
+          this.post.media = "";
         })
         .catch((error) => {
           console.log(error);
         });
+      setTimeout(() => {
+        this.update = true;
+      }, 100);
     },
   },
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .column {
   .base-head {
-    width: 75%;
+    width: 70%;
     margin: auto;
   }
   .head-post {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+
     .title-col {
+      margin: 1rem auto auto auto;
+      width: 50%;
       h1 {
-        padding-top: 5px;
-        margin: 0px;
+        padding-top: 0.3125rem;
+        margin: 0rem;
         text-align: left;
         font-weight: bold;
-        font-size: 20px;
+        font-size: 1.25rem;
       }
     }
     .button-col {
+      width: 50%;
+      text-align: center;
       button {
-        font-size: 15px;
+        font-size: 0.9375rem;
       }
     }
   }
   h2 {
     text-align: left;
-    margin: 20px 0px 10px 10px;
+    margin: 1.25rem 0rem 0.625rem 0.625rem;
     font-weight: bold;
   }
 }
@@ -293,9 +247,9 @@ export default {
   text-align: left;
   h3 {
     text-align: left;
-    font-size: 17px;
-    margin-top: 25px;
-    margin-left: 15px;
+    font-size: 1.0625rem;
+    margin-top: 1.5625rem;
+    margin-left: 0.9375rem;
   }
   .text-content {
     width: 90%;
@@ -303,8 +257,8 @@ export default {
   }
 }
 .interaction-btn {
-  margin-top: 25px;
-  margin-bottom: 25px;
+  margin-top: 1.5625rem;
+  margin-bottom: 1.5625rem;
   display: flex;
   justify-content: space-between;
   button {
@@ -312,7 +266,7 @@ export default {
   }
 }
 .box-post {
-  width: 75%;
+  width: 70%;
   margin: auto auto;
 }
 .box-event {
@@ -324,12 +278,25 @@ export default {
     text-align: right;
   }
   label {
-    margin-top: 5px;
-    font-size: 16px;
+    margin-top: 0.3125rem;
+    font-size: 1rem;
     text-align: left;
   }
   .help {
     text-align: left;
+  }
+}
+
+@media only screen and (max-width: (430px)) {
+  .title-col {
+    white-space: nowrap;
+    flex-basis: 100%;
+  }
+  button {
+    text-align: center;
+  }
+  .column {
+    width: 100%;
   }
 }
 </style>
