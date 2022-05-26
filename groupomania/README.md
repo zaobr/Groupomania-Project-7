@@ -6,9 +6,16 @@ Projet 7 du parcours Dev Web d'OpenClassrooms réalisé avec Vue.js, Axios et Bu
 
 
 ## Avant de débuter ⚠️
+Extrait le dump de la base de données MySQL avec l'extension .sql et excutez la commande suivante en adaptant à la situation:
+
+```
+mysql -u username -p new_database < data-dump. sql
+
+```
+
 
 Changer l'extension du fichier .infos en .env.
-Les champs DB_USER, DB_PWD, correspondent à l'utilisateur et au mot de passe afin d'accéder à la base de donnée et DB_PORT au port sur lequel MySQL fonctionne.
+Les champs DB_USER, DB_PWD, correspondent à l'utilisateur et au mot de passe afin d'accéder à la base de donnée et DB_PORT au port sur lequel MySQL fonctionne (les autres paramétres suivent la même logique).
 
 Veuillez renseigner ces derniers dans le fichier .env avant de lancer le projet.
 
