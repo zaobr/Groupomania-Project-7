@@ -6,7 +6,7 @@ Projet 7 du parcours Dev Web d'OpenClassrooms réalisé avec Vue.js, Axios et Bu
 
 
 ## Avant de débuter ⚠️
-Extrait le dump de la base de données MySQL avec l'extension .sql et excutez la commande suivante en adaptant à la situation:
+Extrayez le dump de la base de données MySQL avec l'extension .sql de l'archive .zip et excutez la commande suivante en adaptant à la situation:
 
 ```
 mysql -u username -p new_database < data-dump. sql
