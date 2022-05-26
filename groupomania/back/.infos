@@ -1,0 +1,13 @@
+Port serveur et port par défaut
+S_PORT=8888
+D_PORT=3000
+
+Identifiants de la base de donnée
+DB_HOST=localhost
+DB_PORT=3306
+DB_NAME=groupo
+DB_USER=root
+DB_PWD=
+
+Clé JWT
+JWT_K=4d0355c19b77c407df737b4d7b2a71ac
