@@ -69,15 +69,16 @@
           :key="comment.id"
           class="media"
         >
-          <figure class="media-left">
+          <figure class="media-left figure-pic">
             <p class="image is-48x48">
               <img
                 :src="comment.user.media"
                 alt="Miniature photo de profil utilisateur"
+                class="comment-pic"
               />
             </p>
           </figure>
-          <div class="media-content">
+          <div class="media-content comment">
             <div class="content">
               <p>
                 <strong
@@ -102,7 +103,7 @@
         </article>
       </div>
       <article v-if="showComment == post.id" class="media">
-        <figure class="media-left">
+        <figure class="media-left figure-pic">
           <p class="image is-48x48">
             <img
               class="comment-pic"
@@ -116,7 +117,7 @@
             <p class="control">
               <textarea
                 class="textarea"
-                placeholder="Add a comment..."
+                placeholder="Ajouter un commentaire"
                 v-model="text"
               ></textarea>
             </p>
@@ -397,7 +398,7 @@ h2 {
   h2 {
     text-align: left;
     font-size: 1.0625rem;
-    margin-top: 1.5625rem;
+    margin-top: 2rem;
     margin-left: 0.9375rem;
   }
   .text-content {
@@ -427,7 +428,16 @@ h2 {
   margin: auto auto;
 }
 .comment-pic {
-  margin: auto 0.3rem auto auto;
+  margin: auto 0.5rem auto 0.3rem;
+}
+.comment{
+  margin-left: 0.4rem;
+}
+.figure-pic{
+  text-align: center;
+  align-self: center;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 .box-form {
   h2 {

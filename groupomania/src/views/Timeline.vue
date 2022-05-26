@@ -231,6 +231,7 @@ export default {
     }
     .button-col {
       width: 50%;
+      margin-top: 0.4rem;
       text-align: center;
       button {
         font-size: 0.9375rem;

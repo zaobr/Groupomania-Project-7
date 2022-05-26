@@ -266,7 +266,6 @@ export default {
     margin-left: auto;
     margin-right: auto;
     align-content: center;
-    width: 60%;
     padding-bottom: 0.625rem;
   }
 }
