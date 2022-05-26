@@ -10,7 +10,6 @@ Extrait le dump de la base de données MySQL avec l'extension .sql et excutez la
 
 ```
 mysql -u username -p new_database < data-dump. sql
-
 ```
 
 
