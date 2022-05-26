@@ -14,11 +14,10 @@ Veuillez renseigner ces derniers dans le fichier .env avant de lancer le projet.
 
 
 
-➡️ Les commandes suivantes sont à lancer depuis le dossier Groupomania. ⬅️
-
 
 
 ## Installation des ressources nécéssaires au fonctionnement du projet 🚦
+➡️ Les commandes suivantes sont à lancer depuis le dossier Groupomania. ⬅️
 
 
 Lancez la commande suivante:
